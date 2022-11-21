@@ -57,7 +57,6 @@ where c.CUSTOMERKEY in (
 
 
 -- 14) Write a SQL Query to find out the products returned for Region Germany.
-TERRITORIES2 RETURNS2
 with return_data as (
 select * from returns2 r
 where exists (
