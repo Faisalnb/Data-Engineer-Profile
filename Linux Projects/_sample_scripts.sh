@@ -57,3 +57,28 @@ then
 else
  echo "the number is not divisible by 3 and 2"
 fi
+
+#---------------------------------------------------------------------------------------------------
+#5.Write a script to check the entered number is prime
+#!/bin/bash
+
+COUNT=0
+D=1
+echo "Enter a number: " 
+read N
+while [ ${D} -le ${N}  ]
+do 
+ if [ $(( $N % $D )) -eq 0 ] 
+ then
+  COUNT=$(( ${COUNT} + 1 ))
+ fi
+ D=$(( ${D} + 1 ))
+done
+
+if [ ${COUNT} -eq 2 ]
+then
+ echo "this is prime"
+else
+ echo "not prime"
+fi
+
