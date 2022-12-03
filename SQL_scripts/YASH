@@ -1,0 +1,236 @@
+--ADD COL USERNAME AND UPDATE FIRST 2 ROWS
+ALTER TABLE EMP_TABLE ADD USERNAME VARCHAR(100);
+
+UPDATE EMP_TABLE
+SET USERNAME='Faisal'
+WHERE FIRST_NAME='Alton' AND LAST_NAME='Griblin';
+
+COMMIT;
+--write a query to return str position of 'nie'
+SELECT instr(FIRST_NAME,'nie') fname,FIRST_NAME
+FROM EMP_TABLE;
+--FNAME,FIRST_NAME
+-- 7,Stephenie
+
+SELECT EMAIL,SUBSTR(EMAIL,1,INSTR(EMAIL,'@')-1)
+FROM EMP_TABLE;
+--EMAIL,SUBSTR(EMAIL,1,INSTR(EMAIL,'@')-1)
+-- alton_griblin@aol.com,alton_griblin
+-- sulema_halliman@gmail.com,sulema_halliman
+
+
+--write a query to extract values from email before @ and update to username
+UPDATE EMP_TABLE
+SET USERNAME= (
+    SUBSTR(EMAIL,1,INSTR(EMAIL,'@')-1)
+);
+
+--write a query to write full name title ,first and last name
+ALTER TABLE EMP_TABLE ADD FULL_NAME VARCHAR(200);
+UPDATE EMP_TABLE
+SET FULL_NAME = (
+    TITLE||' '||FIRST_NAME||' '||LAST_NAME
+);
+
+--write query to change title of honorrable to dr and promote emp of title ass manager and HR AssIII to senior managers
+SELECT JOB_TITLE, CASE
+        WHEN JOB_TITLE IN ('Assistant Manager', 'Human Resources Assistant III' ) THEN
+            'Senior Manager'
+        WHEN JOB_TITLE='Web Designer II' THEN
+            'Vice President'
+        ELSE
+            JOB_TITLE
+    END AS NEW_TITLE, CASE
+        WHEN TITLE='Honorable' THEN
+            'DR'
+        ELSE
+            TITLE
+    END AS NEW_TITLE
+FROM EMP_TABLE;
+
+--write query to show bonus for employees
+SELECT SALARY, CASE
+        WHEN SALARY=50238 THEN
+            SALARY + 10000
+        WHEN SALARY >=10000 AND SALARY <=19000 THEN
+            SALARY+5000
+        WHEN SALARY=74398 THEN
+            SALARY+25602
+        ELSE
+            SALARY
+    END AS BONUS
+FROM EMP_TABLE;
+
+--write a query to find emp whose title is rev and province is ON /NS
+SELECT *
+FROM EMP_TABLE
+WHERE TITLE ='Rev' AND PROVINCE IN ('ON','NS')
+AND FIRST_NAME LIKE '%al%';
+--TITLE,FIRST_NAME,LAST_NAME,COMPANY_NAME,ADDRESS,CITY,PROVINCE,POSTAL,JOB_TITLE,DEPARTMENT,PHONE1,PHONE2,EMAIL,SALARY,USERNAME,FULL_NAME
+-- Rev,Malorie,Lugar,Reborn Cabinets Inc,328 Fairfield Rd #4,Dartmouth,NS,B2X 1V2,Programmer III,Research and Development,902-948-8374,902-605-8450,malorie_lugar@aol.com,44567,malorie_lugar,Rev Malorie Lugar
+-- Rev,Sallie,Giannell,Schneider, Barbara Esq,2141 E Livingston St,Burlington,ON,L7R 2H1,Office Assistant III,Human Resources,905-859-5681,905-577-9520,sallie_giannell@aol.com,23000,sallie_giannell,Rev Sallie Giannell
+-- Rev,Rosalia,Underberg,W Pearce & Brothers Inc,2 Salscheider Ct,Mississauga,ON,L5E 3G4,Marketing Assistant,Research and Development,905-280-2487,905-767-9974,rosalia_underberg@aol.com,,rosalia_underberg,Rev Rosalia Underberg
+
+--write query to find length of str and then trim it and then find length again
+SELECT ' KARYN' AS NAME,LENGTH(' KARYN'), TRIM(' KARYN'),LENGTH(TRIM(' KARYN')) AS TRIMMED_NAME FROM DUAL;
+-- NAME,LENGTH('KARYN'),TRIM('KARYN'),TRIMMED_NAME
+  KARYN,6,KARYN,5
+
+--write a script to copy table emp_table to other TABLE
+CREATE TABLE COPY_EMP_TABLE AS SELECT FIRST_NAME, LAST_NAME,SALARY FROM EMP_TABLE;
+SELECT * FROM COPY_EMP_TABLE;
+--FIRST_NAME,LAST_NAME,SALARY
+-- Alton,Griblin,23458
+-- Sulema,Halliman,53879
+-- Rubye,Vanhevel,23458
+
+--write a query to select max sal from DEPs
+SELECT DEPARTMENT, MAX(SALARY)
+FROM EMP_TABLE
+GROUP BY DEPARTMENT
+ORDER BY DEPARTMENT;
+--DEPARTMENT,MAX(SALARY)
+-- Accounting,50238
+-- Business Development,53879
+-- Engineering,74398...
+
+--write a query to replace null using coalesce function
+SELECT FIRST_NAME,LAST_NAME,COALESCE(SALARY,0)
+FROM EMP_TABLE;
+--FIRST_NAME,LAST_NAME,COALESCE(SALARY,0)
+-- Luciana,Scroggie,23458
+-- Letitia,Futch,50238
+-- Ida,Sauve,0
+-- Zelma,Picardi,23458
+-- Gerry,Kirkendoll,0
+-- Elza,Goreczny,23000
+-- Diane,Mohr,0
+-- Jazmin,Hebda,0
+-- Syreeta,Villalta,0
+-- Kaley,Peshlakai,53879
+
+--write a query to find MIN salaried empployees
+SELECT *
+FROM EMP_TABLE
+WHERE SALARY= (
+    SELECT MIN(SALARY)
+    FROM EMP_TABLE
+);
+--TITLE,FIRST_NAME,LAST_NAME,COMPANY_NAME,ADDRESS,CITY,PROVINCE,POSTAL,JOB_TITLE,DEPARTMENT,PHONE1,PHONE2,EMAIL,SALARY,USERNAME,FULL_NAME
+-- Mr,Leticia,Courtenay,Battistellas Sea Foods Inc,501 Doolittle St,Rimouski,QC,G5M 0E4,Marketing Assistant,Sales,418-594-3463,418-492-2352,leticia_courtenay@courtenay.com,10000,leticia_courtenay,Mr Leticia Courtenay
+-- Ms,Owen,Briski,Waisman, Sonia S Esq,2276 Michigan St,Calgary,AB,T2W 0T1,Marketing Manager,Training,403-359-4622,403-325-3977,obriski@gmail.com,10000,obriski,Ms Owen Briski
+-- Ms,Kirsten,Lowrie,Wasserman Schneider & Babb,8012 Gaither Dr,Kingsville,ON,N9Y 1G2,Research Associate,Research and Development,519-516-8033,519-248-7022,klowrie@yahoo.com,10000,klowrie,Ms Kirsten Lowrie
+-- Mrs,Caren,Pink,Bass, Adam Esq,585 W 18th St,Woodstock,ON,N4S 2G4,Engineer II,Training,519-751-8932,519-848-3001,cpink@pink.com,10000,cpink,Mrs Caren Pink
+-- Ms,Emil,Cihon,Krieger & Krieger,1 E 11th Ave,Thorold,ON,L2V 2W9,Librarian,Training,905-448-6708,905-601-1982,emil.cihon@cox.net,10000,emil.cihon,Ms Emil Cihon
+-- Ms,Christine,Kerce,Kuroman Realty Inc,928 Washington St,LIle-Perrot,QC,J7V 3G5,Compensation Analyst,Support,514-665-8758,514-300-2927,christine@kerce.org,10000,christine,Ms Christine Kerce
+
+
+CREATE TABLE ABC (
+    ID NUMBER(2), NAME VARCHAR2(20), CITY VARCHAR2(20)
+);
+
+INSERT INTO ABC VALUES (
+    1,'YASH','PUNE'
+);
+INSERT INTO ABC VALUES (
+    1,'YASH','PUNE'
+);
+
+Select * from ABC a where rowid <>( select max(rowid) from
+ABC b where a.ID=b.ID);
+
+SELECT COUNT(*)
+FROM ABC2
+GROUP BY ID
+HAVING COUNT(*)>1;
+
+DELETE FROM ABC
+WHERE ROWID='AAAR/UAAEAAAI19AAB';
+
+CREATE TABLE ABC2 AS SELECT DISTINCT ID,NAME,CITY FROM ABC;
+
+
+--write a query to represent data as transaction log for bank passbook
+select tr_date, acc_name, type, amount,
+  sum(case when type = 'DB' then -1 else 1 end * amount)
+    over (partition by acc_name order by tr_date) as balance
+from BANK
+order by acc_name, tr_date;
+
+
+
+--9TH oct 2022
+----Physician Table
+
+CREATE TABLE Physician(
+   employeeid INTEGER  NOT NULL 
+  ,name       VARCHAR(17) NOT NULL
+  ,position   VARCHAR(28) NOT NULL
+  ,ssn        INTEGER  NOT NULL
+);
+
+--Data
+
+INSERT INTO Physician(employeeid,name,position,ssn) 
+SELECT 1,'John Dorian','Staff Internist',111111111 FROM DUAL
+UNION ALL SELECT 2,'Elliot Reid','Attending Physician',222222222 FROM DUAL
+UNION ALL SELECT 3,'Christopher Turk','Surgical Attending Physician',333333333 FROM DUAL
+UNION ALL SELECT 4,'Percival Cox','Senior Attending Physician',444444444 FROM DUAL
+UNION ALL SELECT 5,'Bob Kelso','Head Chief of Medicine',555555555 FROM DUAL
+UNION ALL SELECT 6,'Todd Quinlan','Surgical Attending Physician',666666666 FROM DUAL
+UNION ALL SELECT 7,'John Wen','Surgical Attending Physician',777777777 FROM DUAL
+UNION ALL SELECT 8,'Keith Dudemeister','MD Resident',888888888 FROM DUAL
+UNION ALL SELECT 9,'Molly Clock','Attending Psychiatrist',999999999 FROM DUAL;
+
+
+
+--Department Table
+
+create table DEP
+(department_id int not null ,
+name VARCHAR(17) NOT NULL,
+head int not null);
+
+
+
+insert into dep
+SELECT 1,'General Medicine', 4 FROM DUAL
+UNION ALL SELECT 2,'Surgery',7 FROM DUAL
+UNION ALL SELECT 3,'Psychiatry',9 FROM DUAL;
+
+
+SELECT COUNT (DISTINCT EMPLOYEEID)
+FROM PHYSICIAN;
+
+ALTER TABLE PHYSICIAN ADD PRIMARY KEY (EMPLOYEEID);
+
+-- affiliated_with
+
+CREATE TABLE affiliated_with(
+   physician INTEGER  NOT NULL CONSTRAINT FK_AW_PH REFERENCES PHYSICIAN(EMPLOYEEID)
+  ,department INTEGER  NOT NULL
+  ,primaryaffiliation VARCHAR(1) NOT NULL
+);
+
+INSERT INTO affiliated_with(physician,department,primaryaffiliation) 
+ SELECT  1,1,'t' FROM DUAL
+UNION ALL SELECT 2,1,'t' FROM DUAL
+UNION ALL SELECT 3,1,'f' FROM DUAL
+UNION ALL SELECT 3,2,'t' FROM DUAL
+UNION ALL SELECT 4,1,'t' FROM DUAL
+UNION ALL SELECT 5,1,'t' FROM DUAL
+UNION ALL SELECT 6,2,'t' FROM DUAL
+UNION ALL SELECT 7,1,'f' FROM DUAL
+UNION ALL SELECT 7,2,'t' FROM DUAL
+UNION ALL SELECT 8,1,'t' FROM DUAL
+UNION ALL SELECT 9,3,'t' FROM DUAL;
+
+ALTER TABLE affiliated_with ADD CONSTRAINT  FK_AW_D FOREIGN KEY (DEPARTMENT) references DEP(DEPARTMENT_ID);
+
+ALTER TABLE AFFILIATED_WITH ADD PRIMARY KEY(PHYSICIAN,primaryaffiliation);
+
+
+
+
+
+
