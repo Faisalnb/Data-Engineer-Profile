@@ -344,7 +344,7 @@ select p.name as "Patient Name",p1.name as "Physician Name" from patient_details
     join physician p1 on a1.physician=p1.employeeid;
 
 
--- 39) Write a query in SQL to Obtain the names of all patients whose primary care is taken by a physician who is not the head of any department and name of that physician along with their primary care physician.
+--- 39) Write a query in SQL to Obtain the names of all patients whose primary care is taken by a physician who is not the head of any department and name of that physician along with their primary care physician.
 with NOT_head as (
 select * from physician p
 where not exists (
